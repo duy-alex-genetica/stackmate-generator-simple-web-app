@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+// Variables
+@import "utilities/variables";
+@import "layouts/base-1";
+@import "layouts/authed";
+
+// 3rd party
+@import "3rd-party/normalize";
+@import "3rd-party/loading-skeleton";
+
+// Ultilities
+@import "utilities/grid";
+@import "utilities/animations";
+@import "utilities/mixins";
+@import "utilities/typography";
+
+// Components
+@import "components/buttons";
+@import "components/cards";
+@import "components/checkbox";
+@import "components/container";
+@import "components/forms";
+@import "components/modals";
+@import "components/tabs";
+@import "components/stepper";
+
+// Common
+@import "common/header";
+@import "common/footer";
+
+//Modules
+
+//Pages
+@import "pages/home";

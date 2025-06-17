@@ -1,0 +1,146 @@
+@mixin custom-scrollbar($thumb-color: #c1c1c1, $track-color: #f1f1f1, $width: 8px) {
+  &::-webkit-scrollbar {
+    width: $width;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $thumb-color;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: $track-color;
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: $thumb-color $track-color;
+}
+
+@mixin heading($size) {
+  font-size: $size * 1rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+@mixin text($size) {
+  font-size: $size * 1rem;
+  line-height: 1.5;
+}
+
+@mixin square($size) {
+  width: $size * 1rem;
+  height: $size * 1rem;
+}
+
+@mixin radius($radius) {
+  border-radius: $radius * 1rem;
+}
+
+.bg-video {
+  @apply absolute block top-0 left-0 w-full h-full z-[-2] object-cover;
+
+  video {
+    @apply absolute inset-0 object-cover;
+  }
+}
+
+.gradient-text-one {
+  background: linear-gradient(to right, #a9cf3b, #5dbb46, #a9cf3b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-text-two {
+  background: linear-gradient(to right, #5dbb46, #a9cf3b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-text-three {
+  background: linear-gradient(to right, #5dbb46, #a9cf3b, #5dbb46);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.filter-white {
+  filter: brightness(0) invert(1);
+}
+
+.gradient-one {
+  background: linear-gradient(to right, #a9cf3b, #5dbb46, #a9cf3b);
+}
+
+.gradient-two {
+  background: linear-gradient(to right, #5dbb46, #a9cf3b);
+}
+
+.gradient-three {
+  background: linear-gradient(to right, #5dbb46, #a9cf3b, #5dbb46);
+}
+
+@mixin hover-underlined($color) {
+  @apply inline-grid relative pb-1 z-0;
+
+  color: $color;
+
+  &:before {
+    @apply absolute z-0 bottom-0 w-0 h-[1px] transition-300 ;
+
+    content: '';
+    background-color: $color;
+  }
+
+  &:hover {
+    &:before {
+      @apply w-full;
+    }
+  }
+}
+
+@mixin hover-animated-arrow() {
+  @apply inline-grid justify-center gap-5 relative z-0 overflow-hidden;
+
+  @media (max-width: $screen-md) {
+    @apply gap-6;
+  }
+
+  .arrow-box {
+    @apply w-4 h-4 relative z-0 overflow-hidden;
+
+    > svg, .icon {
+      @apply absolute z-0 w-full h-full top-0 left-0 transition-300;
+
+      &:nth-child(1) {
+        @apply -translate-x-full;
+      }
+
+      &:nth-child(2) {
+        @apply translate-x-0;
+      }
+    }
+  }
+
+  &:hover {
+    &:before {
+      @apply left-full w-0;
+    }
+
+    .arrow-box {
+      > svg, .icon {
+        &:nth-child(1) {
+          @apply translate-x-0;
+        }
+
+        &:nth-child(2) {
+          @apply translate-x-full;
+        }
+      }
+    }
+  }
+}

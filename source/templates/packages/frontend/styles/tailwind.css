@@ -1,0 +1,11 @@
+/*This file do nothing, but need to be here so shadcn  knows we are using tailwindcss*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+@layer base {
+  :root {
+    --radius: 0.5rem
+  }
+}

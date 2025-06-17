@@ -1,0 +1,35 @@
+@layer base {
+  :root {
+  }
+
+  html {
+    overflow-x: hidden;
+    overflow-y: auto;
+
+
+    > body {
+      &[data-scroll-locked] {
+        overflow: visible !important;
+      }
+    }
+  }
+
+  body {
+    @apply flex flex-col relative leading-6 antialiased;
+
+    #base_1_header {
+      @apply z-[1];
+    }
+
+    #main {
+      @apply relative;
+
+      min-height: calc(100dvh - var(--header-height, 0px) - var(--footer-height, 0px));
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  a {
+    @apply cursor-pointer transition-all duration-300;
+  }
+}

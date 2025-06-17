@@ -1,0 +1,10 @@
+../../.idea
+.cache
+.env
+.next
+node_modules
+yarn-error.log
+.DS_Store
+
+# Sentry Config File
+.env.sentry-build-plugin

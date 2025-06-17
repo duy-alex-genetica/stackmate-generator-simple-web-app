@@ -1,0 +1,81 @@
+@layer utilities {
+  .transition-150 {
+    @apply transition-all duration-150;
+  }
+
+  .transition-200 {
+    @apply transition-all duration-200;
+  }
+
+  .transition-300 {
+    @apply transition-all duration-300;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeOutDown {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+  }
+
+  @keyframes floating {
+    0% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-36px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  .split-word {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .word {
+    position: relative;
+    display: inline-block;
+    background-color: var(--mask-color);
+    opacity: 0.45;
+    background-clip: text;
+    color: transparent;
+    transition: opacity 0.15s;
+  }
+
+  @keyframes slide {
+    0% {
+      left: -50px;
+    }
+    50% {
+      left: calc(100% - 50px);
+    }
+    100% {
+      left: -50px;
+    }
+  }
+
+  @keyframes pulse {
+    50% {
+      opacity: .5
+    }
+  }
+}

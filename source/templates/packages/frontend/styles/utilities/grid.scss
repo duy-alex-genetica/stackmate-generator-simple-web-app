@@ -1,0 +1,13 @@
+@layer utilities {
+  .grid-cols-max {
+    @apply grid grid-flow-col;
+
+    grid-auto-columns: minmax(0, max-content);
+  }
+
+  .grid-rows-max {
+    @apply grid grid-flow-row;
+
+    grid-auto-rows: minmax(0, max-content);
+  }
+}

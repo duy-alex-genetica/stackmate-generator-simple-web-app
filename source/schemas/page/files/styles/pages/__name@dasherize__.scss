@@ -1,0 +1,10 @@
+@layer base {
+  .page-<%= dasherize(name) %> {
+  #main {
+    #section_header {
+      >.container {
+      }
+    }
+  }
+}
+}

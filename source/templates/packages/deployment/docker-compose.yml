@@ -1,0 +1,115 @@
+#version: "3.9"
+
+x-logging-defaults: &logging-defaults
+  logging:
+    driver: ${LOGGING_DRIVER}
+    options:
+      max-size: ${LOGGING_OPTIONS_MAX_SIZE}
+      max-file: ${LOGGING_OPTIONS_MAX_FILE}
+
+x-restart-policy: &restart-policy
+  restart: ${RESTART_POLICY}
+
+services:
+  fluent-bit:
+    <<: [ *logging-defaults, *restart-policy]
+    container_name: ${CONTAINER_NAME_PREFIX}.fluent-bit
+    build:
+      context: ./services/fluent-bit
+      args:
+        - IMAGE_REPOSITORY=${FLUENT_BIT_IMAGE_REPOSITORY}
+        - IMAGE_TAG=${FLUENT_BIT_IMAGE_TAG}
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./services/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./services/fluent-bit/json.lua:/fluent-bit/scripts/json.lua:ro  # ✅ Mount json.lua as read-only
+      - ./services/fluent-bit/extract_metadata.lua:/fluent-bit/etc/extract_metadata.lua
+      - ./services/fluent-bit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
+      - fluent-bit-storage:/fluent-bit/storage
+    environment:
+      - APP_NAME=${APP_NAME}
+      - ENVIRONMENT=${ENVIRONMENT}
+  nginx-proxy:
+    <<: [ *logging-defaults, *restart-policy]
+    container_name: ${CONTAINER_NAME_PREFIX}.nginx-proxy
+    build:
+      context: ./services/nginx-proxy
+      args:
+        - IMAGE_REPOSITORY=${NGINX_PROXY_IMAGE_REPOSITORY}
+        - IMAGE_TAG=${NGINX_PROXY_IMAGE_TAG}
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "${DATA_PATH_HOST}/nginx-data/conf.d:/etc/nginx/conf.d"
+      - "${DATA_PATH_HOST}/nginx-data/vhost.d:/etc/nginx/vhost.d"
+      - "${DATA_PATH_HOST}/nginx-data/html:/usr/share/nginx/html"
+      - "${DATA_PATH_HOST}/nginx-data/certs:/etc/nginx/certs:ro"
+      - "${DATA_PATH_HOST}/nginx-data/htpasswd:/etc/nginx/htpasswd:ro"
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - "./services/nginx-proxy/conf.d/cache_expirations.conf:/etc/nginx/conf.d/cache_expirations.conf:ro"
+      - "./services/nginx-proxy/conf.d/compression.conf:/etc/nginx/conf.d/compression.conf:ro"
+      - "./services/nginx-proxy/conf.d/custom.conf:/etc/nginx/conf.d/custom.conf:ro"
+      - "./services/nginx-proxy/templates:/app/templates"
+    networks:
+      - nginx-proxy
+  nginx-letsencrypt:
+    <<: [ *logging-defaults, *restart-policy]
+    container_name: ${CONTAINER_NAME_PREFIX}.nginx-letsencrypt
+    build:
+      context: ./services/nginx-letsencrypt
+      args:
+        - IMAGE_REPOSITORY=${NGINX_LETSENCRYPT_IMAGE_REPOSITORY}
+        - IMAGE_TAG=${NGINX_LETSENCRYPT_IMAGE_TAG}
+    restart: always
+    depends_on:
+      - nginx-proxy
+    volumes:
+      - "${DATA_PATH_HOST}/nginx-data/conf.d:/etc/nginx/conf.d"
+      - "${DATA_PATH_HOST}/nginx-data/vhost.d:/etc/nginx/vhost.d"
+      - "${DATA_PATH_HOST}/nginx-data/html:/usr/share/nginx/html"
+      - "${DATA_PATH_HOST}/nginx-data/certs:/etc/nginx/certs:rw"
+      - "${DATA_PATH_HOST}/nginx-data/htpasswd:/etc/nginx/htpasswd:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "${DATA_PATH_HOST}/nginx-data/acme.sh:/etc/acme.sh"
+    environment:
+      - DEBUG=1
+      - ACME_CA_URI=${ACME_CA_URI}
+      - ZEROSSL_API_KEY=${ZEROSSL_API_KEY}
+      - ACME_EMAIL=${ACME_EMAIL}
+  frontend:
+    <<: [ *logging-defaults, *restart-policy]
+    container_name: ${CONTAINER_NAME_PREFIX}.frontend
+    build:
+      context: ./services/frontend
+      args:
+        - IMAGE_REPOSITORY=${FRONTEND_IMAGE_REPOSITORY}
+        - IMAGE_TAG=${FRONTEND_IMAGE_TAG}
+    networks:
+      - nginx-proxy
+    environment:
+      - VIRTUAL_HOST=${FRONTEND_URL}
+      - VIRTUAL_PORT=${FRONTEND_PORT}
+      - LETSENCRYPT_HOST=${FRONTEND_URL}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${FRONTEND_GOOGLE_SERVICE_ACCOUNT_JSON}
+      - SPREAD_SHEET_ID=${FRONTEND_SPREAD_SHEET_ID}
+      - SPREAD_SHEET_NAME=${FRONTEND_SPREAD_SHEET_NAME}
+      - SPREAD_SHEET_REFERRAL_CODE_NAME=${FRONTEND_SPREAD_SHEET_REFERRAL_CODE_NAME}
+      - GOOGLE_DRIVE_PARENT_FOLDER_ID=${FRONTEND_GOOGLE_DRIVE_PARENT_FOLDER_ID}
+      - SLACK_WEBHOOK_URL=${FRONTEND_SLACK_WEBHOOK_URL}
+      - SLACK_USERNAME=${FRONTEND_SLACK_USERNAME}
+      - BRANCH_KEY=${FRONTEND_BRANCH_KEY}
+      - APP_URL=${FRONTEND_PROTOCOL}://${FRONTEND_URL}
+volumes:
+  fluent-bit-storage:
+    driver: local
+    name: ${CONTAINER_NAME_PREFIX}.data.fluent-bit-storage
+
+networks:
+  nginx-proxy:
+    name: nginx-proxy
+    external: true

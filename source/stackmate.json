@@ -1,0 +1,8 @@
+{
+  "$schema": "https://cdn.jsdelivr.net/gh/duy-alex-genetica/schemas@main/stackmate-base-schema.json",
+  "generator": {
+    "name": "@duy-alex-genetica/stackmate-generator-simple-web-app",
+    "version": "1.0.0",
+    "stackmateCompatibleVersion": "1.0.0"
+  }
+}

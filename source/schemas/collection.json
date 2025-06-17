@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/schematics",
+  "schematics": {
+    "page": {
+      "description": "Generate a Next.js page with SCSS and SectionHeader component",
+      "factory": "./page/index#createPage"
+    },
+    "component": {
+      "description": "Generate a Next.js component with SCSS component",
+      "factory": "./component/index#createComponent"
+    },
+    "env": {
+      "description": "Add environment variable into the Next.js app",
+      "factory": "./env/index#addEnv"
+    }
+  }
+}
