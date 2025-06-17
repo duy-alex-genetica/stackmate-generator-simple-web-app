@@ -16,9 +16,14 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@duy-alex-genetica'
 
-      - name: Show token prefix for debug
+      - name: Check if token is loaded
         run: |
-          echo "Token starts with: ${NPM_PUBLISH_PAT:0:4}****${NPM_PUBLISH_PAT: -4}"
+          if [[ -z "$NPM_PUBLISH_PAT" ]]; then
+            echo "❌ Token not loaded"
+            exit 1
+          else
+            echo "✅ Token is loaded"
+          fi
         env:
           NPM_PUBLISH_PAT: ${{ secrets.NPM_PUBLISH_PAT }}
 
