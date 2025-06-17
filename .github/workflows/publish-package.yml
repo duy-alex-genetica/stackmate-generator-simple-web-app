@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://npm.pkg.github.com'
-          scope: '@duy-alex-genetica'
+          scope: '@genefriendway'
 
       - name: Check if token is loaded
         run: |
